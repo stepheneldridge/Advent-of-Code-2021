@@ -1,4 +1,5 @@
 import re
+import math
 t = []
 with open("Day17.txt", 'r') as INPUT:
     data = INPUT.read()
@@ -37,7 +38,7 @@ class Probe:
         return self.pos["y"] < self.target[1] or self.pos["x"] > self.target[2]
 
 hits = []
-for i in range(t[2] + 1):
+for i in range(int(math.sqrt(1 + 8 * t[0]) - 1) >> 1, t[2] + 1):
     for j in range(t[1] - 1, 1 - t[1]):
         p = Probe(0, 0, i, j, t)
         while not p.past_target():
