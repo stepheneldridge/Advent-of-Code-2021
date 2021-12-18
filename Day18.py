@@ -1,6 +1,6 @@
 nums = []
 with open("Day18.txt", 'r') as INPUT:
-    data = INPUT.read().split("\n")
+    data = INPUT.read().replace(",", "").split("\n")
     for i in data:
         a = list(i)
         for j in range(len(a)):
@@ -20,14 +20,14 @@ def find(n, i, d):
 
 def explode(n, index):
     right_i = find(n, index, 1)
-    left_i = find(n, index - 3, - 1)
-    x = n[index - 3]
+    left_i = find(n, index - 2, - 1)
+    x = n[index - 2]
     y = n[index - 1]
     if left_i is not None:
         n[left_i] += x
     if right_i is not None:
         n[right_i] += y
-    return n[0:index - 4] + [0] + n[index + 1:]
+    return n[0:index - 3] + [0] + n[index + 1:]
 
 def reduce(n):
     depth = 0
@@ -50,15 +50,15 @@ def reduce(n):
         if type(i) is int and i >= 10:
             a = i // 2
             b = i - a
-            n = n[0:index] + ["[", a, ",", b, "]"] + n[index + 1:]
+            n = n[0:index] + ["[", a, b, "]"] + n[index + 1:]
             if depth >= 4:
-                return explode(n, index + 4), True
+                return explode(n, index + 3), True
             return n, True
         index += 1
     return n, False
 
 def add(a, b):
-    s = ["["] + a + [","] +  b + ["]"]
+    s = ["["] + a + b + ["]"]
     go = True
     while go:
         s, go = reduce(s)
