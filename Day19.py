@@ -41,6 +41,8 @@ class Scanner:
         return (a[r1][0] + b[r2][0], a[r1][1] + b[r2][1], a[r1][2] + b[r2][2])
 
     def combine(self, n):
+        a = self.own_set()
+        n -= a
         for i in n:
             self.points.append(self.get_rotations(i))
 
@@ -51,9 +53,9 @@ class Scanner:
         return {i[0] for i in self.points}
 
     def find_overlaps(self, s):
-        for r in range(24):
-            for i in self.points[:-11]:
-                for j in s.points[:-11]:
+        for i in self.points[:-11]:
+            for j in s.points[:-11]:
+                for r in range(24):
                     offset = self.sub(i, 0, j, r)
                     a = self.rotation_offset_set(s, r, offset)
                     for k in self.sets:
@@ -63,7 +65,7 @@ class Scanner:
                             self.sets[s.id] = a
                             self.offsets[s.id] = offset
                             return True
-        return None
+        return False
 
 scanners = []
 with open("Day19.txt", 'r') as INPUT:
@@ -87,7 +89,7 @@ while len(scanners) > 0:
     pops.reverse()
     for i in pops:
         scanners.pop(i)
-print("part 1:", len(main.own_set()))
+print("part 1:", len(main.points))
 d = 0
 for i in main.offsets:
     for j in main.offsets:
