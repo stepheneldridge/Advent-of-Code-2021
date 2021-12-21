@@ -23,19 +23,23 @@ while max(score) < 1000:
     die = (die + 3) % 100
 print("part 1:", min(score) * rolls)
 
-outcomes = {3: 1, 4: 3, 5: 6, 6: 7, 7: 6, 8: 3, 9: 1}
-wins = [0, 0]
+outcomes = {2: 1, 3: 3, 4: 6, 5: 7, 6: 6, 7: 3, 8: 1}
+cache = dict()
 
-def find_winner(turn, p1, p2, s1, s2, m):
-    global wins
+def find_winner(p1, p2, s1, s2):
+    global cache
+    if s2 >= 21:
+        return [0, 1]
+    key = (p1, p2, s1, s2)
+    if key in cache:
+        return cache[key]
+    wins = [0, 0]
     for i in outcomes:
-        t = (((p1 + i) - 1) % 10) + 1
-        pc = t
-        sc = s1 + t
-        if sc >= 21:
-            wins[turn] += outcomes[i] * m
-            continue
-        find_winner(0 if turn else 1, p2, pc, s2, sc, m * outcomes[i])
-
-find_winner(0, player1, player2, 0, 0, 1)
-print("part 2:", max(wins))
+        pc = ((p1 + i) % 10) + 1
+        sc = s1 + pc
+        r = find_winner(p2, pc, s2, sc)
+        wins[1] += r[0] * outcomes[i]
+        wins[0] += r[1] * outcomes[i]
+    cache[key] = wins
+    return wins
+print("part 2:", max(find_winner(player1, player2, 0, 0)))
