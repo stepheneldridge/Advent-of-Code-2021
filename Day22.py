@@ -1,6 +1,5 @@
 import re
 reboot = []
-on = set()
 with open("Day22.txt", 'r') as INPUT:
     data = INPUT.read().split("\n")
     for f in data:
@@ -11,20 +10,6 @@ with open("Day22.txt", 'r') as INPUT:
         y = (d[2], d[3])
         z = (d[4], d[5])
         reboot.append((state, x, y, z))
-        for i in range(-50, 51):
-            if i not in range(d[0], d[1] + 1):
-                continue
-            for j in range(-50, 51):
-                if j not in range(d[2], d[3] + 1):
-                    continue
-                for k in range(-50, 51):
-                    if k not in range(d[4], d[5] + 1):
-                        continue
-                    if state > 0:
-                        on.add((i, j, k))
-                    else:
-                        on.discard((i, j, k))
-print("part 1:", len(on))
 
 def overlap(a, b):
     return (a[0] <= b[0] and b[0] <= a[1]) or (b[0] <= a[0] and a[0] <= b[1])
@@ -41,14 +26,20 @@ def get_overlap_cube(a, b):
 def get_volume(a):
     return a[0] * (a[1][1] - a[1][0] + 1) * (a[2][1] - a[2][0] + 1) * (a[3][1] - a[3][0] + 1)
 
+def get_collisions(n, c):
+    collisions = []
+    for i in n:
+        if intersect(c, i):
+            collisions.append(get_overlap_cube(i, c))
+    return collisions
+
 cubes = [reboot[0]]
 for i in reboot[1:]:
-    collisions = []
-    for j in cubes:
-        if intersect(i, j):
-            collisions.append(get_overlap_cube(j, i))
+    collisions = get_collisions(cubes, i)
     if i[0] > 0:
         cubes.append(i)
     cubes.extend(collisions)
 
+cube = (1, (-50, 50), (-50, 50), (-50, 50))
+print("part 1:", sum(-get_volume(i) for i in get_collisions(cubes, cube)))
 print("part 2:", sum(get_volume(i) for i in cubes))
